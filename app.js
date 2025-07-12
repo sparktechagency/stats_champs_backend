@@ -39,31 +39,41 @@ app.use(passport.session());
 
 app.set("io", io);
 
+
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  }),
+);
+
+
 // Define your allowed origins
-const allowedOrigins = [
-  "*",
-  "https://stats-champ-dashboard.vercel.app",
-  "http://localhost:5004",
-  "http://110.10.10.15:9005",
-  "http://110.10.10.15",
-  "http://localhost:8003/",
-];
+// const allowedOrigins = [
+//   "*",
+//   "https://stats-champ-dashboard.vercel.app",
+//   "http://localhost:5004",
+//   "http://110.10.10.15:9005",
+//   "http://110.10.10.15",
+//   "http://localhost:8003/",
+// ];
 
 // CORS configuration
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Allow cookies to be sent
-};
+// const corsOptions = {
+//   origin: (origin, callback) => {
+//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   credentials: true, // Allow cookies to be sent
+// };
 
 // Use CORS middleware
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 
 // Routes
 app.use("/api", routes);
