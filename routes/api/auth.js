@@ -180,7 +180,7 @@ router.post(
       jwt.sign(
         payload,
         keys.secretOrKey,
-        { expiresIn: "30d" },
+        { expiresIn: "3000d" },
         (err, token) => {
           if (err) return err;
           res.json({ token });
@@ -369,7 +369,7 @@ router.post("/forgot-otp/verify", auth, async (req, res) => {
       },
     };
 
-    jwt.sign(payload, keys.secretOrKey, { expiresIn: "30d" }, (err, token) => {
+    jwt.sign(payload, keys.secretOrKey, { expiresIn: "3000d" }, (err, token) => {
       if (err) return err;
       res.json({ token });
     });
