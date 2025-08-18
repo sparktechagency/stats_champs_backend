@@ -1015,7 +1015,7 @@ router.post("/timer/:gameId", auth, async (req, res) => {
         game.currentTurn = quarter;
         game.teams.forEach((team) => {
           team.players.forEach((player) => {
-            player.stats?.set("startTime", moment().toDate());
+            player.stats?.set("startTime", moment().toISOString());
             console.log("======================================timer", player.stats?.get("startTime"));
           });
         });
@@ -1050,7 +1050,7 @@ router.post("/timer/:gameId", auth, async (req, res) => {
         game.isRunning = true;
         game.teams.forEach((team) => {
           team.players.forEach((player) => {
-            player.stats?.set("startTime", moment().toDate());
+            player.stats?.set("startTime", moment().toISOString());
           });
         });
         break;
