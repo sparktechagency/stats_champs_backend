@@ -1018,6 +1018,7 @@ router.post("/timer/:gameId", auth, async (req, res) => {
             player.stats?.set("startTime", moment().toDate());
           });
         });
+        console.log("======================================timer", player.stats?.get("startTime"));
         break;
 
       case "stop":
