@@ -1015,7 +1015,7 @@ router.post("/timer/:gameId", auth, async (req, res) => {
         game.currentTurn = quarter;
         game.teams.forEach((team) => {
           team.players.forEach((player) => {
-            player.stats?.set("startTime", Date.now());
+            player.stats?.set("startTime", moment().toDate());
           });
         });
         break;
@@ -1025,6 +1025,7 @@ router.post("/timer/:gameId", auth, async (req, res) => {
         game.teams.forEach((team) => {
           team.players.forEach((player) => {
             const startTime = player.stats?.get("startTime");
+            console.log("🚀 ~stop------>> startTime:", startTime)
 
             if (startTime) {
               const startMoment = moment(startTime);
@@ -1032,9 +1033,12 @@ router.post("/timer/:gameId", auth, async (req, res) => {
 
               if (startMoment.isValid()) {
                 const minutes = endMoment.diff(startMoment, "minutes");
+                console.log("🚀 ~ minutes:", minutes)
                 const prevMinutes = Number(player.stats?.get("MIN") || 0);
+                const totalTime = Number(prevMinutes) + Number(minutes)
+                console.log("🚀 ~ totalTime:", totalTime)
 
-                player.stats?.set("MIN", prevMinutes + minutes);
+                player.stats?.set("MIN",totalTime);
               }
             }
           });
@@ -1045,7 +1049,7 @@ router.post("/timer/:gameId", auth, async (req, res) => {
         game.isRunning = true;
         game.teams.forEach((team) => {
           team.players.forEach((player) => {
-            player.stats?.set("startTime", moment().toISOString());
+            player.stats?.set("startTime", moment().toDate());
           });
         });
         break;
