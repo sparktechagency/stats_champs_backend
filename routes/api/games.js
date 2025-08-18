@@ -1016,9 +1016,9 @@ router.post("/timer/:gameId", auth, async (req, res) => {
         game.teams.forEach((team) => {
           team.players.forEach((player) => {
             player.stats?.set("startTime", moment().toDate());
+            console.log("======================================timer", player.stats?.get("startTime"));
           });
         });
-        console.log("======================================timer", player.stats?.get("startTime"));
         break;
 
       case "stop":
