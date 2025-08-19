@@ -23,6 +23,7 @@ const gameSchema = new mongoose.Schema({
     type: Number,
     default: 8,
   },
+   playTime: { type: String },
   teams: [
     {
       team: {
@@ -32,7 +33,7 @@ const gameSchema = new mongoose.Schema({
       },
       stats: { type: Map, of: Number, default: null }, // Dynamic key-value pairs for team stats
       teamName: { type: String, default: null },
-      teamLogo: { type: String, default: null },
+      teamLogo: { type: String, default: null }, 
       players: [
         {
           player: {
