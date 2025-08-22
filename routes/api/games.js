@@ -345,9 +345,9 @@ router?.get("/:id", async (req, res) => {
     if (!game) return res.status(404).send({ message: "Game not found" });
     res.status(200).json({
       game: {
-        // ...game._doc,
+        ...game._doc,
         gameStats: gameStats,
-        // sportsType: sportType.name,
+        sportsType: sportType.name,
       },
     });
   } catch (error) {
