@@ -193,7 +193,7 @@ router?.get("/:id", async (req, res) => {
           teamName: 1,
           teamLogo: 1,
           totalPlayers: "$totalPlayers",
-          PTS: {
+          PTS: {$toInt:{
             $round: [
               {
                 $add: [
@@ -203,13 +203,13 @@ router?.get("/:id", async (req, res) => {
                 ],
               },
               1,
-            ],
+            ],}
           },
-          REB: {
-            $round: [{ $add: ["$totalOREB", "$totalDREB"] }, 1],
+          REB: {$toInt:{
+            $round: [{ $add: ["$totalOREB", "$totalDREB"] }, 1],}
           }, 
          
-         FG: {
+         FG: {$toInt:{
             $round: [
               {
                 $cond: {
@@ -229,10 +229,10 @@ router?.get("/:id", async (req, res) => {
                 },
               },
               1,
-            ],
+            ],}
           },
       
-          FG_PERCENTAGE: {
+          FG_PERCENTAGE: {$toInt:{
               $round: [
               {
                 $cond: [
@@ -243,10 +243,10 @@ router?.get("/:id", async (req, res) => {
                 
               },
               1,
-            ],
+            ],}
           },
          
-          "2PT_FG": {
+          "2PT_FG": {$toInt:{
             $round: [
               {
                 $cond: {
@@ -258,9 +258,9 @@ router?.get("/:id", async (req, res) => {
                 },
               },
               1,
-            ],
+            ],}
           },
-          "3PT_FG": {
+          "3PT_FG": {$toInt:{
             $round: [
               {
                 $cond: {
@@ -272,9 +272,9 @@ router?.get("/:id", async (req, res) => {
                 },
               },
               1,
-            ],
+            ],}
           },
-              FT_PERCENTAGE:  {
+              FT_PERCENTAGE:  {$toInt:{
               $round: [
               {
                 $cond: [
@@ -285,10 +285,10 @@ router?.get("/:id", async (req, res) => {
                 
               },
               1,
-            ],
+            ],}
           },
           "3P_PERCENTAGE":  
-              {
+              {$toInt:{
               $round: [
               {
                 $cond: [
@@ -299,9 +299,9 @@ router?.get("/:id", async (req, res) => {
                 
               },
               1,
-            ],
+            ],}
           },
-          FT: {
+          FT: {$toInt:{
             $round: [
               {
                 $cond: {
@@ -313,22 +313,22 @@ router?.get("/:id", async (req, res) => {
                 },
               },
               1,
-            ],
+            ],}
           },
           
-          OREB: {
+          OREB: {$toInt:{
             $cond: {
               if: { $eq: ["$totalOREB", null] }, // optional check for null
               then: 0,
               else: "$totalOREB",
-            },
+            },}
           }, 
-          DREB: {
+          DREB: {$toInt:{
             $cond: {
               if: { $eq: ["$totalDREB", null] }, // optional check for null
               then: 0,
               else: "$totalDREB",
-            },
+            },}
           },
           AST: "$totalAST",
           TO: "$totalTO",
@@ -336,7 +336,7 @@ router?.get("/:id", async (req, res) => {
           BLK: "$totalBLK",
           STL: "$totalSTL",
           PM: "$totalPM",
-          MIN: "$totalMIN",
+          MIN: {$toInt:"$totalMIN"},
         },
       },
     ]);
