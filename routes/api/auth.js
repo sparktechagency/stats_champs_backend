@@ -474,7 +474,7 @@ router.post("/verify-otp", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!user.otpCode || user.otpCode !== parseInt(otp)) {
+    if (!user.otpCode || user.otpCode !== otp) {
       // Important: Parse OTP to integer
       return res.status(400).json({ message: "Invalid OTP" });
     }
