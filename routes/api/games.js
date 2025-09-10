@@ -698,9 +698,9 @@ router.post("/overtime/:id", auth, async (req, res) => {
 // @desc     Finish the game
 // @access   Public
 router.post("/finish/:gameId", auth, async (req, res) => {
+  const session = await startSession();
+  session.startTransaction();
   try {
-    const session = await startSession();
-    session.startTransaction();
 
     const game = await Game.findById(req.params.gameId).session(session);
     if (!game) {
