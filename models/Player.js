@@ -29,7 +29,7 @@ const PlayerSchema = new mongoose.Schema(
           default: null,
         },
         stats: { type: Map, of: Number, default: null },
-        date: { type: Date, default: Date.now },
+        date: { type: Date, default: Date.now ,default:null},
       },
     ],
   },

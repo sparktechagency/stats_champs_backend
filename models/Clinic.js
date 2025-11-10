@@ -4,11 +4,11 @@ const { type } = require("os");
 const ClinicSchema = new mongoose.Schema({
   clinicName: { type: String, required: true },
   ownerName: { type: String, required: true },
-  photo: { type: String },
+  photo: { type: String,default:null },
   contact: { type: Number, required: true },
   email: { type: String, required: true },
-  videoUrl: { type: String },
-  practicesImages: [{ type: String }],
+  videoUrl: { type: String ,default:null},
+  practicesImages: [{ type: String ,default:null}],
   location: {
     type: {
       type: String, // 'Point'

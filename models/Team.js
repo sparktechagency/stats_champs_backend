@@ -2,16 +2,16 @@ const mongoose = require("mongoose");
 
 const TeamSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  logo: { type: String}, //  logo is url stored in cloud storage.
+  logo: { type: String,default:null}, //  logo is url stored in cloud storage.
   sportsType: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "SportType",
+    ref: "SportType",default:null
   },
 
   players: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Player",
+      ref: "Player",default:null
     },
   ],
   activated: {

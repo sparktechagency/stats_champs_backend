@@ -444,6 +444,7 @@ router.get("/team-standing/:tournamentId", auth, async (req, res) => {
 
     const data = await GameResult.aggregate(pipeline);
 
+
     let mergedData = [...data[0].wins, ...data[0].losses];
     // Find the team in the accumulator
 

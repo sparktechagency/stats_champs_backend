@@ -3,16 +3,16 @@ const mongoose = require("mongoose");
 const contentsSchema = new mongoose.Schema(
   {
     aboutUs: {
-      type: String,
+      type: String,default:null
     },
     termsAndConditions: {
-      type: String,
+      type: String,default:null
     },
     privacyPolicy: {
-      type: String,
+      type: String,default:null
     },
     supports: {
-      type: String,
+      type: String,default:null
     },
     
   },

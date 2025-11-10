@@ -18,7 +18,7 @@ const NotificationsSchema = new mongoose.Schema(
     },
     model_type: {
       type: String,
-      enum: Object.values(modeType),
+      enum: Object.values(modeType),required:[true,"model type is required"]
     },
     message: {
       type: String,
@@ -26,7 +26,7 @@ const NotificationsSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      default: "",
+     default:null
     },
     read: {
       type: Boolean,

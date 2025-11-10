@@ -11,6 +11,7 @@ const gameResultSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Tournament",
     required: false,
+    default:null
   },
   teamAScore: {
     type: Number,
