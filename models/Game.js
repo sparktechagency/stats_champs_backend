@@ -23,7 +23,7 @@ const gameSchema = new mongoose.Schema({
     type: Number,
     default: 8,
   },
-   playTime: { type: String },
+   playTime: { type: String ,default:null},
   teams: [
     {
       team: {
@@ -83,7 +83,7 @@ const gameSchema = new mongoose.Schema({
 
   date: {
     type: Date,
-    default: Date.now(),
+    default: Date.now(),default:null
   },
 
   overTimeStart: {

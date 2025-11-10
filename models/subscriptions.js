@@ -7,7 +7,7 @@ const subscriptionSchema = new Schema(
     amount: { type: Number, require: true },
     isPaid: { type: Boolean, default: false },
     startDate: { type: Date, default: Date.now },
-    endDate: { type: Date },
+    endDate: { type: Date ,default:null},
     isActive: { type: Boolean, default: null },
     paymentIntentId: { type: String, default: null }, // Add this field
   },

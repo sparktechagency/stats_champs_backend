@@ -3,10 +3,10 @@ const mongoose = require("mongoose");
 const physicalTherapistSchema = new mongoose.Schema({
   physicalTherapistName: { type: String, required: true },
   ownerName: { type: String, required: true },
-  photo: { type: String },
+  photo: { type: String ,default:null},
   contact: { type: String, required: true },
   email: { type: String, required: true },
-  videoUrl: { type: String },
+  videoUrl: { type: String ,default:null},
   practicesImages: { type: [String], required: true },
   location: {
     type: {
@@ -21,7 +21,7 @@ const physicalTherapistSchema = new mongoose.Schema({
   },
   headline: { type: String, required: true },
   shortDescription: { type: String, required: true },
-  fullDescription: { type: String },
+  fullDescription: { type: String ,default:null},
   activated: { type: Boolean, default: true },
 });
 

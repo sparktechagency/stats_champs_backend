@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const CourtSchema = new mongoose.Schema({
-  photo: { type: String },
+  photo: { type: String ,default:null},
   sportsType: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "SportType",
@@ -18,7 +18,7 @@ const CourtSchema = new mongoose.Schema({
       required: true,
     },
   },
-  about: { type: String },
+  about: { type: String ,default:null},
   activated: { type: Boolean, default: true },
 });
 

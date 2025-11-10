@@ -8,18 +8,19 @@ const blogSchema = new mongoose.Schema({
     },
     sportsType: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'SportType'  
+        ref: 'SportType'  ,
+        default:null
     },
     photo: { 
-        type: String 
+        type: String ,default:null
     },
     title: {
         type: String,
-        required: true
+        required: true,default:null
     },
     date: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     description: {
         type: String,

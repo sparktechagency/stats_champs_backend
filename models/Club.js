@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 
 const ClubSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  photo: { type: String },
+  photo: { type: String ,default:null},
   contact: { type: Number, required: true },
   email: { type: String, required: true },
   skill: { type: String, required: true },
-  videoUrl: { type: String },
-  practicesImages: [{ type: String }],
+  videoUrl: { type: String ,default:null},
+  practicesImages: [{ type: String ,default:null}],
   location: {
     type: {
       type: String, // 'Point'
