@@ -44,7 +44,8 @@ const gameSchema = new mongoose.Schema({
           name: { type: String, required: true },
           position: { type: Number, default: 0 },
           stats: { type: Map, of: Number, default: null }, // Dynamic key-value pairs for player stats
-          no: { type: Number, default: null },
+          no: { type: Number, default: null }, 
+          isInCourt:{type:Boolean, default:true}
         },
       ],
     },
