@@ -448,23 +448,26 @@ router.post("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
         return res.status(404).json({ message: "Player not found" });
       }
     }
-    let value = new Map();
-    const stats = await player.stats.forEach((games) => {
-      if (games.gameId.toString() === req.params.gameId) {
-        value = games.stats;
-      }
-    });
-    team.players.push({
-      player: playerId,
-      name: player.name,
-      position: position,
-      stats: value,
-    });
-    await game.save();
+    // let value = new Map();
+    // const stats = await player.stats.forEach((games) => {
+    //   if (games.gameId.toString() === req.params.gameId) {
+    //     value = games.stats;
+    //   }
+    // });
+const newGame = await Game.findByIdAndUpdate(game?._id, {
+  "teams.$[].players.$[player].isInCourt":true
+}, {new:true})
+    // team.players.push({
+    //   player: playerId,
+    //   name: player.name,
+    //   position: position,
+    //   stats: value,
+    // });
+    // await game.save();
     const io = req.app?.get("io");
     // io.emit("updateGame", req.params.gameId);
-    io.emit("updateGame", game); // Notify all clients about game update
-    res.status(200).json(game);
+    io.emit("updateGame", newGame); // Notify all clients about game update
+    res.status(200).json(newGame);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -488,24 +491,28 @@ router.delete("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
       return res.status(404).json({ message: "Team not found in this game" });
     }
 
-    const playerIndex = team.players.findIndex(
-      (player) => player.player.toString() === playerId
-    );
-    if (playerIndex === -1) {
-      return res.status(404).json({ message: "Player not found in this team" });
-    }
+    const newGame = await Game.findByIdAndUpdate(game?._id, {
+  "teams.$[].players.$[player].isInCourt":true
+}, {new:true})
+
+    // const playerIndex = team.players.findIndex(
+    //   (player) => player.player.toString() === playerId
+    // );
+    // if (playerIndex === -1) {
+    //   return res.status(404).json({ message: "Player not found in this team" });
+    // }
 
     // Save player stats before removing the player
-    const player = team.players[playerIndex];
-    const playerStats = player.stats;
-    await savePlayerStats(playerId, game._id, playerStats);
+    // const player = team.players[playerIndex];
+    // const playerStats = player.stats;
+    // await savePlayerStats(playerId, game._id, playerStats);
 
-    team.players.splice(playerIndex, 1);
+    // team.players.splice(playerIndex, 1);
 
-    await game.save();
+    // await game.save();
     const io = req.app?.get("io");
-    io.emit("updateGame", game); // Notify all clients about game update
-    res.status(200).json(game);
+    io.emit("updateGame", newGame);  
+    res.status(200).json(newGame);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
