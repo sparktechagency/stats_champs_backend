@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const SchoolSchema = new mongoose.Schema({
-  photo: { type: String },
+  photo: { type: String ,default:null},
   name: { type: String, required: true },
   contact: { type: Number, required: true },
   location: {

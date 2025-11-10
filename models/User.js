@@ -13,10 +13,10 @@ const UserSchema = new mongoose.Schema(
       default: "Male",
     },
     dateOfBirth: {
-      type: Date,
+      type: Date,default:null
     },
     password: { type: String, required: true },
-    contactNumber: { type: Number, required: true },
+    contactNumber: { type: String, required: true },
     date: { type: Date, default: Date.now, default: null },
     stripeCustomerId: { type: String, default: null }, // For Stripe users
     paypalSubscriptionId: { type: String, default: null }, // For PayPal user
