@@ -427,36 +427,48 @@ router.patch("/:id", auth, async (req, res) => {
 // @access   Public
 router.post("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
   try {
-    const playerId = req.params.playerId;
-    const game = await Game.findById(req.params.gameId);
+         const { gameId, teamId, playerId } = req.params; 
     const position = req.body.position;
+    const game = await Game.findById(gameId);
     if (!game) {
       return res.status(404).json({ message: "Game not found" });
     }
+
+     // Check if team exists in the game
     const team = game.teams.find(
-      (team) => team.team.toString() === req.params.teamId
+      (t) => t.team.toString() === teamId
     );
     if (!team) {
       return res.status(404).json({ message: "Team not found in this game" });
     }
+
+
+
     const player = await Player.findById(playerId);
     if (!player) {
       return res.status(404).json({ message: "Player not found" });
-    } else {
-      const teamId = player.teamId;
-      if (teamId.toString() !== req.params.teamId) {
-        return res.status(404).json({ message: "Player not found" });
-      }
     }
-    // let value = new Map();
-    // const stats = await player.stats.forEach((games) => {
-    //   if (games.gameId.toString() === req.params.gameId) {
-    //     value = games.stats;
-    //   }
-    // });
-const newGame = await Game.findByIdAndUpdate(game?._id, {
-  "teams.$[].players.$[player].isInCourt":true
-}, {new:true})
+   
+ const updatedGame = await Game.updateOne(
+      {
+        _id: gameId,
+        "teams.team": teamId,
+        "teams.players.player": playerId,
+      },
+      {
+        $set: {
+          "teams.$[team].players.$[player].isInCourt": true,
+          "teams.$[team].players.$[player].position": position,
+        },
+      },
+      {
+        arrayFilters: [
+          { "team.team": teamId },
+          { "player.player": playerId },
+        ],
+        new: true,
+      }
+    ); 
     // team.players.push({
     //   player: playerId,
     //   name: player.name,
@@ -466,8 +478,8 @@ const newGame = await Game.findByIdAndUpdate(game?._id, {
     // await game.save();
     const io = req.app?.get("io");
     // io.emit("updateGame", req.params.gameId);
-    io.emit("updateGame", newGame); // Notify all clients about game update
-    res.status(200).json(newGame);
+    io.emit("updateGame", updatedGame); // Notify all clients about game update
+    res.status(200).json(updatedGame);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -478,42 +490,46 @@ const newGame = await Game.findByIdAndUpdate(game?._id, {
 // @access   Public
 router.delete("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
   try {
-    const playerId = req.params.playerId;
-    const game = await Game.findById(req.params.gameId);
+      const { gameId, teamId, playerId } = req.params;
+     const game = await Game.findById(gameId);
     if (!game) {
       return res.status(404).json({ message: "Game not found" });
     }
 
+     // Check if team exists in the game
     const team = game.teams.find(
-      (team) => team.team.toString() === req.params.teamId
+      (t) => t.team.toString() === teamId
     );
     if (!team) {
       return res.status(404).json({ message: "Team not found in this game" });
     }
 
-    const newGame = await Game.findByIdAndUpdate(game?._id, {
-  "teams.$[].players.$[player].isInCourt":true
-}, {new:true})
+    // Update player's isInCourt field using array filters
+    const updatedGame = await Game.updateOne(
+      {
+        _id: gameId,
+        "teams.team": teamId,
+        "teams.players.player": playerId,
+      },
+      {
+        $set: {
+          "teams.$[team].players.$[player].isInCourt": false,
+        },
+      },
+      {
+        arrayFilters: [
+          { "team.team": teamId },
+          { "player.player": playerId },
+        ],
+        new: true,
+      }
+    ); 
 
-    // const playerIndex = team.players.findIndex(
-    //   (player) => player.player.toString() === playerId
-    // );
-    // if (playerIndex === -1) {
-    //   return res.status(404).json({ message: "Player not found in this team" });
-    // }
-
-    // Save player stats before removing the player
-    // const player = team.players[playerIndex];
-    // const playerStats = player.stats;
-    // await savePlayerStats(playerId, game._id, playerStats);
-
-    // team.players.splice(playerIndex, 1);
-
-    // await game.save();
     const io = req.app?.get("io");
-    io.emit("updateGame", newGame);  
-    res.status(200).json(newGame);
+    io.emit("updateGame", updatedGame);  
+    res.status(200).json(updatedGame);
   } catch (error) {
+    console.log(error)
     res.status(400).json({ message: error.message });
   }
 });
