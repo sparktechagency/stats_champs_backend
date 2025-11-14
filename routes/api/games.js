@@ -429,6 +429,7 @@ router.post("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
   try {
          const { gameId, teamId, playerId } = req.params; 
     const position = req.body.position;
+    console.log("--------------->>Player Position", req.body)
     const game = await Game.findById(gameId);
     if (!game) {
       return res.status(404).json({ message: "Game not found" });
