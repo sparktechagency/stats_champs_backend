@@ -427,9 +427,9 @@ router.patch("/:id", auth, async (req, res) => {
 // @access   Public
 router.post("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
   try {
-         const { gameId, teamId, playerId } = req.params; 
+         const { gameId, teamId, playerId  } = req.params; 
     const position = req.body.position;
-    console.log("--------------->>Player Position", req.body)
+    console.log("--------------->>Player Position", position)
     const game = await Game.findById(gameId);
     if (!game) {
       return res.status(404).json({ message: "Game not found" });
@@ -450,26 +450,47 @@ router.post("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
       return res.status(404).json({ message: "Player not found" });
     }
    
- const updatedGame = await Game.updateOne(
-      {
-        _id: gameId,
-        "teams.team": teamId,
-        "teams.players.player": playerId,
-      },
-      {
-        $set: {
-          "teams.$[team].players.$[player].isInCourt": true,
-          "teams.$[team].players.$[player].position": position,
-        },
-      },
-      {
-        arrayFilters: [
-          { "team.team": teamId },
-          { "player.player": playerId },
-        ],
-        new: true,
-      }
-    ); 
+//  const updatedGame = await Game.findOneAndUpdate(
+//       {
+//         _id: gameId,
+//         "teams.team": teamId,
+//         "teams.players.player": playerId,
+//       },
+//       {
+       
+//           "teams.$[team].players.$[player].isInCourt": true,
+//           "teams.$[team].players.$[player].position": position,
+       
+//       },
+//       {
+//         arrayFilters: [
+//           { "team.team": teamId },
+//           { "player.player": playerId },
+//         ],
+//         new: true,
+//       }
+//     ); 
+const updatedGame = await Game.findOneAndUpdate(
+  {
+    _id: gameId,
+    "teams.team": teamId,
+    "teams.players.player": playerId,
+  },
+  {
+    $set: {
+      "teams.$[team].players.$[player].isInCourt": true,
+      "teams.$[team].players.$[player].position": position,
+    }
+  },
+  {
+    arrayFilters: [
+      { "team.team": teamId },
+      { "player.player": playerId },
+    ],
+    new: true,
+  }
+);
+    console.log(updatedGame)
     // team.players.push({
     //   player: playerId,
     //   name: player.name,

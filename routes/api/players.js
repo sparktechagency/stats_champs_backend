@@ -57,6 +57,7 @@ router.get("/", async (req, res) => {
         teamName: player?.teamId?.name, // Fetch the team name from the related team document
         sportsType: req?.query?.sportsType,
       })),
+      total:count,
       totalPages: Math.ceil(count / pageSize),
       currentPage: page,
       pageSize,
