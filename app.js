@@ -10,6 +10,7 @@ const { memoryStorage } = require("multer");
 const multer = require("multer");
 const { PutObjectCommand, S3Client } = require("@aws-sdk/client-s3");
 const initializeSocketIO = require("./socket");
+const Player = require("./models/Player");
 const envFilePath = path.resolve(__dirname, "./.env");
 const env = require("dotenv").config({ path: envFilePath });
 if (env.error) {
@@ -115,6 +116,21 @@ app.post("/api/upload", upload.single("image"), async (req, res) => {
     }
   } catch (error) {
     res.status(400).json({ message: error?.message });
+  }
+});
+app.get("/ss", async (req, res) => {
+  
+  try {
+    const players = await Player.find({});
+
+    
+   
+
+    return res.json({ message: "All players updated!", data:players });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Something went wrong" });
   }
 });
 
