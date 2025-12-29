@@ -40,7 +40,6 @@ app.use(passport.session());
 
 app.set("io", io);
 
-
 app.use(
   cors({
     origin: true,
@@ -49,13 +48,21 @@ app.use(
   }),
 );
 
+// app.use(
+//   cors({
+//     origin: "true",
+//     credentials: true,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+//   }),
+// );
+
 
 // Define your allowed origins
 // const allowedOrigins = [
 //   "*",
 //   "https://stats-champ-dashboard.vercel.app",
-//   "http://localhost:5004",
-//   "http://110.10.10.15:9005",
+//   "http://localhost:3000",
+//   "http://103.186.20.117:3000",
 //   "http://110.10.10.15",
 //   "http://localhost:8003/",
 // ];
@@ -73,7 +80,7 @@ app.use(
 //   credentials: true, // Allow cookies to be sent
 // };
 
-// Use CORS middleware
+// // Use CORS middleware
 // app.use(cors(corsOptions));
 
 // Routes

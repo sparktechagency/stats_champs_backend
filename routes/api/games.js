@@ -689,7 +689,6 @@ router.post("/timer/:gameId", auth, async (req, res) => {
             //  const minutes = endMoment.diff(startMoment, "minutes");
                 const prevMinutes = Number(player.stats?.get("MIN") || 0);
                 const totalTime = Number(prevMinutes) + Number(minutes)
-                console.log("🚀 ~ totalTime:", totalTime)
 
                 player.stats?.set("MIN",totalTime);
              
@@ -753,11 +752,16 @@ router.post("/finish/:gameId", auth, async (req, res) => {
     }
 
     // Iterate over the teams and players to update player stats
+    
     for (const team of game.teams) {
+   
+      // const startTime = moment(player.stats?.get("startTime")) || moment()
       for (const player of team.players) {
-        const startTime = moment(player.stats?.get("startTime"));
+        // const game.playTime 
+        // const startTime = moment(player.stats?.get("startTime")) || moment()
+        const startTime = moment(game.playTime) || moment()
         const endTime = moment(); 
-        const minutes = endTime.diff(startTime, "minutes");
+        const minutes = endTime.diff(startTime, "minutes"); 
         if (!isNaN(minutes)) {
           player.stats?.set("MIN", (player.stats?.get("MIN") || 0) + minutes);
         } else {
@@ -766,14 +770,14 @@ router.post("/finish/:gameId", auth, async (req, res) => {
 
           if(game?.overTimeStart) {
           const ot = moment(game.overTimeStart);
-          const OverTime =  endTime.diff(ot, "minutes")
+          const OverTime =  endTime.diff(ot, "minutes") 
           const oldOverTime = team.stats?.get("OT") || 0;
           team.stats.set("OT", oldOverTime + OverTime); 
         }
-        await savePlayerStats(player.player, game._id, player.stats, session); // Pass session for transaction
+        
+        await savePlayerStats(player.player, game._id, player.stats, session);  
       }
-    }
-
+    } 
     // Reset game state
     game.isRunning = false;
     game.status = "Finished";
@@ -859,7 +863,9 @@ router.patch("/status/:gameId/:teamId/:playerId", auth, async (req, res) => {
     }
 
     // Calculate player time on court efficiently
-    const startTime = new Date(playerStat.stats?.get("startTime"));
+    const date = playerStat.stats?.get("startTime")
+    const startTime = new Date(date); 
+     
     if (!isNaN(startTime.getTime())) {
       // Ensure startTime is valid
       const minutes = Math.floor((Date.now() - startTime) / 1000 / 60);
