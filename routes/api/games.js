@@ -429,7 +429,7 @@ router.patch("/:id", auth, async (req, res) => {
 // @access   Public
 router.post("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
   try {
-         const { gameId, teamId, playerId  } = req.params; 
+    const { gameId, teamId, playerId  } = req.params; 
     const position = req.body.position;
     const game = await Game.findById(gameId);
     if (!game) {
@@ -462,7 +462,7 @@ const updatedGame = await Game.findOneAndUpdate(
     $set: {
        "teams.$[team].players.$[player].isInCourt": true,
        "teams.$[team].players.$[player].position": position,
-       "teams.$[team].players.$[player].stats.startTime": new Date()
+       "teams.$[team].players.$[player].stats.startTime":  moment().toISOString(),
      
     }
   },
@@ -483,60 +483,7 @@ const updatedGame = await Game.findOneAndUpdate(
     res.status(400).json({ message: error.message });
   }
 });
-
-// @route    DELETE api/games/player/:gameId/player/:playerId
-// @desc     Remove a player from a game
-// @access   Public
-// router.delete("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
-//   try {
-//       const { gameId, teamId, playerId } = req.params;
-//      const game = await Game.findById(gameId);
-//     if (!game) {
-//       return res.status(404).json({ message: "Game not found" });
-//     }
-
-//      // Check if team exists in the game
-//   const team = game.teams.find(t => t.team.toString() === teamId);
-//     if (!team) {
-//       return res.status(404).json({ message: "Team not found in this game" });
-//     }
-  
-//     const player = team.players.find(p => p.player.toString() === playerId);
-
-// stopPlayerTime(player);
-// player.isInCourt = false;
-
-// await game.save();
-
-// //     const updatedGame = await Game.findOneAndUpdate(
-// //   {
-// //     _id: gameId,
-// //     "teams.team": teamId,
-// //     "teams.players.player": playerId,
-// //   },
-// //   {
-// //     $set: {
-// //       "teams.$[team].players.$[player].isInCourt": false,
-// //     },
-// //   },
-// //   {
-// //     arrayFilters: [
-// //       { "team.team": teamId },
-// //       { "player.player": playerId },
-// //     ],
-// //     new: true,
-// //   }
-// // );
-
-
-//     const io = req.app?.get("io");
-//     io.emit("updateGame", game);  
-//     res.status(200).json(game);
-//   } catch (error) {
-//     console.log(error)
-//     res.status(400).json({ message: error.message });
-//   }
-// });
+// ----------------------------------------
 router.delete("/player/:gameId/:teamId/:playerId", auth, async (req, res) => {
   try {
       const { gameId, teamId, playerId } = req.params;
@@ -557,27 +504,6 @@ stopPlayerTime(player);
 player.isInCourt = false;
 
 await game.save();
-
-//     const updatedGame = await Game.findOneAndUpdate(
-//   {
-//     _id: gameId,
-//     "teams.team": teamId,
-//     "teams.players.player": playerId,
-//   },
-//   {
-//     $set: {
-//       "teams.$[team].players.$[player].isInCourt": false,
-//     },
-//   },
-//   {
-//     arrayFilters: [
-//       { "team.team": teamId },
-//       { "player.player": playerId },
-//     ],
-//     new: true,
-//   }
-// );
-
 
     const io = req.app?.get("io");
     io.emit("updateGame", game);  
@@ -630,62 +556,6 @@ async function savePlayerStats(playerId, gameId, stats) {
   await player.save();
 }
 
-// @route    POST api/games/timeout/:gameId/:teamId
-// @desc     Add a timeout for a team
-// @access   Public
-// router.post("/timeout/:gameId/:teamId", auth, async (req, res) => {
-//   const { teamId } = req.params;
-
-//   try {
-//     const game = await Game.findById(req.params.gameId);
-//     if (!game) {
-//       return res.status(404).send({ message: "Game not found" });
-//     }
-
-//     const team = game.teams.find((stat) => stat.team.toString() === teamId);
-//     if (!team) {
-//       return res.status(404).json({ message: "Team not found in this game" });
-//     }
-
-//     // Increment timeout count
-//     team.stats?.set("timeout", (team.stats?.get("timeout") || 0) + 1);
-
-//     // Stop the game
-//     game.isRunning = false;
-
-//     game.teams.forEach((team) => {
-//       team.players.forEach((player) => {
-//         const startTime = player.stats?.get("startTime");
-
-//         if (startTime) {
-//           const startMoment = moment(startTime);
-//           const now = moment();
-
-//           if (startMoment.isValid()) {
-//             const minutes = now.diff(startMoment, "minutes");
-//             const prevMinutes = Number(player.stats?.get("MIN") || 0);
-
-//             player.stats?.set("MIN", prevMinutes + minutes);
-//           } else {
-//             player.stats?.set("MIN", 0); // fallback
-//           }
-//         }
-//       });
-//     });
-
-//     await game.save();
-
-//     const io = req.app?.get("io");
-//     if (io) {
-//       io.emit("updateGame", game); // Notify all clients
-//     }
-
-//     res.status(200).json(game);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(400).json({ message: error.message });
-//   }
-// });
 
 router.post("/timeout/:gameId/:teamId", auth, async (req, res) => {
   try {
@@ -729,35 +599,50 @@ router.post("/timer/:gameId", auth, async (req, res) => {
       case "play":
         game.isRunning = true;
         game.currentTurn = quarter;
-        game.playTime = moment().toISOString(); 
+       const times = moment().toISOString(); 
+        game.playTime =times
+         for (const team of game.teams) {
+
+      for (const player of team.players) { 
+        if (player.isInCourt) {
+          player.stats.set("startTime", times); 
+        }
+
+        await savePlayerStats(
+          player.player,
+          game._id,
+          player.stats,
+          session
+        );
+      }
+          }
+        
         break;
 
       case "stop":
-        game.isRunning = false;
-        // game.teams.forEach((team) => {
-        //   team.players.forEach((player) => {
-        //     const startTime = game.playTime 
-
-        //     if (startTime) {
-        //       const startMoment = moment(startTime); 
-        //       const endMoment = moment();
-        //       const diffInMs = endMoment.diff(startMoment);
-        //       const minutes = (diffInMs / (1000 * 60)).toFixed(2); 
-        //     //  const minutes = endMoment.diff(startMoment, "minutes");
-        //         const prevMinutes = Number(player.stats?.get("MIN") || 0);
-        //         const totalTime = Number(prevMinutes) + Number(minutes)
-
-        //         player.stats?.set("MIN",totalTime);
-             
-        //     }
-        //   });
-        // });
+        game.isRunning = false; 
          stopAllPlayers(game);
         break;
 
       case "resume":
         game.isRunning = true;
-        game.playTime = moment().toISOString(); 
+        const time = moment().toISOString(); 
+        game.playTime = time
+         for (const team of game.teams) {
+
+      for (const player of team.players) { 
+        if (player.isInCourt) {
+          player.stats.set("startTime", time); 
+        }
+
+        await savePlayerStats(
+          player.player,
+          game._id,
+          player.stats,
+          session
+        );
+      }
+          }
         break;
 
       case "increase":
@@ -913,99 +798,6 @@ router.post("/finish/:gameId", auth, async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 });
-
-// router.post("/finish/:gameId", auth, async (req, res) => {
-//   try {
-//     const session = await startSession();
-//     session.startTransaction();
-
-//     const game = await Game.findById(req.params.gameId).session(session);
-//     if (!game) {
-//       return res.status(404).json({ message: "Game not found" });
-//     }
-
-//     // Iterate over the teams and players to update player stats
-    
-//     for (const team of game.teams) {
-   
-//       // const startTime = moment(player.stats?.get("startTime")) || moment()
-//       for (const player of team.players) {
-//         // const game.playTime 
-//         // const startTime = moment(player.stats?.get("startTime")) || moment()
-//         const startTime = moment(game.playTime) || moment()
-//         const endTime = moment(); 
-//         const minutes = endTime.diff(startTime, "minutes"); 
-//         if (!isNaN(minutes)) {
-//           player.stats?.set("MIN", (player.stats?.get("MIN") || 0) + minutes);
-//         } else {
-//           player.stats?.set("MIN", 0); // Default to 0 if minutes calculation fails
-//         }
-
-//           if(game?.overTimeStart) {
-//           const ot = moment(game.overTimeStart);
-//           const OverTime =  endTime.diff(ot, "minutes") 
-//           const oldOverTime = team.stats?.get("OT") || 0;
-//           team.stats.set("OT", oldOverTime + OverTime); 
-//         }
-        
-//         await savePlayerStats(player.player, game._id, player.stats, session);  
-//       }
-//     } 
-//     // Reset game state
-//     game.isRunning = false;
-//     game.status = "Finished";
-//     await game.save({ session });
-
-//     let looserTeamId, winnerTeamId;
-//     const teamA = game.teams[0];
-//     const teamB = game.teams[1];
-//     const team1Score = teamA.stats.get("SCORE") || 0;
-//     const team2Score = teamB.stats.get("SCORE") || 0;
-
-//     if (team1Score > team2Score) {
-//       looserTeamId = teamB.team;
-//       winnerTeamId = teamA.team;
-//     } else if (team2Score > team1Score) {
-//       looserTeamId = teamA.team;
-//       winnerTeamId = teamB.team;
-//     }
-//     const data = {
-//       gameId: game._id,
-//       teamAScore: teamA.stats.get("SCORE") || 0,
-//       teamBScore: teamB.stats.get("SCORE") || 0,
-//       tournamentId: game.tournamentId,
-//       winnerTeamId,
-//       looserTeamId,
-//     };
-//     if (!game.tournamentId) {
-//       delete data.tournamentId;
-//     }
-
-//     await GameResult.create([data], { session });
-
-//     const io = global.socketio;
-//     if (io) {
-//       io.emit("updateGame", game);
-//     }
-
-//     // Commit the transaction
-//     await session.commitTransaction();
-//     session.endSession();
-
-//     // Broadcast updated game to all clients
-//     res.status(200).json(game);
-//   } catch (error) {
-//     console.error(error);
-
-//     // If any error occurs, rollback the transaction
-//     if (session) {
-//       await session.abortTransaction();
-//       session.endSession();
-//     }
-
-//     res.status(400).json({ message: error.message });
-//   }
-// });
 
 
 router.patch("/status/:gameId/:teamId/:playerId", auth, async (req, res) => {
