@@ -193,6 +193,7 @@ router?.get("/:id", async (req, res) => {
           teamName: 1,
           teamLogo: 1,
           totalPlayers: "$totalPlayers",
+          
           PTS: {$toInt:{
             $round: [
               {
@@ -335,13 +336,14 @@ router?.get("/:id", async (req, res) => {
           PF: "$totalPF",
           BLK: "$totalBLK",
           STL: "$totalSTL",
-          PM: "$totalPM",
+          PM: "$totalPM", 
           MIN: {$toInt:"$totalMIN"},
         },
       },
     ]);
     const sportType = await SportType.findById(game.sportsType);
 
+    
     if (!game) return res.status(404).send({ message: "Game not found" });
     res.status(200).json({
       game: {
@@ -1073,10 +1075,12 @@ router.patch("/status/:gameId/:teamId/:playerId", auth, async (req, res) => {
         updatePlayerPlusMinus(team, game, teamId, 1);
       },
       point2: () => {
+        updatePlayerStat(playerStat, "2PA", 1);
+        updatePlayerStat(playerStat, "2PM", 1);
         updatePlayerStat(playerStat, "FGM", 1);
         updatePlayerStat(playerStat, "FGA", 1);
         updatePlayerStat(playerStat, "PTS", 2);
-        updateStatPercentage(playerStat, "FGM", "FGA", "FG_PERCENT");
+        updateStatPercentage(playerStat, "2PM", "2PA", "2P_PERCENT");
         updateTeamScore(team, game, 2);
         updatePlayerPlusMinus(team, game, teamId, 2);
       },
